@@ -3,6 +3,14 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    if (path === "/mark.html" || path.startsWith("/assets/")) {
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
+
+      return new Response("Static assets are not configured", { status: 500 });
+    }
+
     if (path === "/api/hello") {
       return Response.json({
         message: "Hello from Cloudflare Workers!",

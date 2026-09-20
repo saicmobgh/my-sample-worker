@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/mark.css">
+    <title>标记</title>
+  </head>
+
+  <body>
+    <div id="container" class="layout">
+      <div class="map-panel">
+        <div id="map"></div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="panel panel-info">
+          <div class="panel-heading">辅助定位标记</div>
+
+          <div class="panel-body">
+            <div class="field-row">
+              <input id="lonlat" class="form-control" placeholder="输入任意文本，提取第一个经纬度">
+              <input id="locate" type="button" class="btn btn-default" value=" 定 位 ">
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="field-row">
+              <input id="click-lonlat" class="form-control" placeholder="地图点击坐标">
+              <input id="mark" type="button" class="btn btn-default" value=" 标 记 ">
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <textarea id="lonlats" rows="20" cols="35" placeholder="粘贴任意包含经纬度的文本，支持一整段日志、JSON、数组或普通坐标串"></textarea>
+
+            <div class="action-row">
+              <input id="mark2" type="button" class="btn btn-default" value=" 画 点 ">
+              <input id="mark3" type="button" class="btn btn-default" value=" 画 线 ">
+              <input id="clean" type="button" class="btn btn-default" value=" 清 理 ">
+            </div>
+          </div>
+
+          <div class="panel-body help-text">
+            <b>支持方式：</b>
+            <ul>
+              <li>常规串：<code>121.48,31.24;121.49,31.25</code></li>
+              <li>JSON / 数组：<code>[[121.48,31.24],[121.49,31.25]]</code></li>
+              <li>字符串数组：<code>"121.48,31.24","121.49,31.25"</code></li>
+              <li>带标签文本：<code>lng=121.48 lat=31.24</code></li>
+              <li>WKT / 空格形式：<code>POINT (121.48 31.24)</code></li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=db1dd5d396334eaf405fb4c5698c08ac&plugin=AMap.Scale"></script>
+    <script src="./assets/map-base.js"></script>
+    <script src="./assets/mark-app.js"></script>
+  </body>
+</html>

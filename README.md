@@ -6,6 +6,7 @@ A sample Cloudflare Worker deployed via Workers Builds.
 
 - `GET /` — Hello World HTML page
 - `GET /api/hello` — JSON response with a greeting and timestamp
+- `GET /mark.html` — Coordinate marking map page
 
 ## Local Development
 
@@ -13,6 +14,8 @@ A sample Cloudflare Worker deployed via Workers Builds.
 npm install
 npx wrangler dev
 ```
+
+The map page is served from `public/mark.html` and its files in `public/assets/`.
 
 ## Deploy
 

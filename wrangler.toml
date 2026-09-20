@@ -2,5 +2,9 @@ name = "my-sample-worker"
 main = "src/index.js"
 compatibility_date = "2024-09-25"
 
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
 # Deploy with: npx wrangler deploy
 # After pushing to GitHub, connect this repo via Workers & Pages > Settings > Builds
