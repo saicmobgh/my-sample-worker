@@ -112,6 +112,34 @@
           }
         );
       },
+      function extractSingleValueArrayPairs(source) {
+        var values = [];
+        var matches = [];
+        var pattern = /\[\s*["']?([-+]?\d+(?:\.\d+)?)["']?\s*\]/g;
+        var match;
+
+        while ((match = pattern.exec(source)) !== null) {
+          values.push({
+            value: Number(match[1]),
+            start: match.index,
+            end: pattern.lastIndex
+          });
+        }
+
+        for (var index = 0; index + 1 < values.length; index += 2) {
+          var coordinate = toCoordinate(values[index].value, values[index + 1].value);
+
+          if (coordinate) {
+            matches.push({
+              coordinate: coordinate,
+              start: values[index].start,
+              end: values[index + 1].end
+            });
+          }
+        }
+
+        return matches;
+      },
       function extractCommaPairs(source) {
         return collectMatches(
           source,
@@ -283,9 +311,14 @@
     });
 
     markPointsButton.addEventListener("click", function () {
-      extractCoordinatePairs(lonlatsTextarea.value).forEach(function (coordinate) {
+      mapBase.clearAll();
+
+      var coordinates = extractCoordinatePairs(lonlatsTextarea.value);
+      coordinates.forEach(function (coordinate) {
         markCoordinate(coordinate);
       });
+
+      mapBase.fitView();
     });
 
     drawLineButton.addEventListener("click", function () {
