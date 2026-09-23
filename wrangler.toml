@@ -6,5 +6,9 @@ compatibility_date = "2024-09-25"
 directory = "./public"
 binding = "ASSETS"
 
+[[routes]]
+pattern = "wk.depsek.de5.net"
+custom_domain = true
+
 # Deploy with: npx wrangler deploy
 # After pushing to GitHub, connect this repo via Workers & Pages > Settings > Builds
