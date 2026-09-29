@@ -23,6 +23,7 @@ export default {
       `<!DOCTYPE html>
 <html>
 <head><title>My First Worker</title>
+<link rel="icon" type="image/jpeg" href="/assets/favicon.jpeg">
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f38020; }
   .card { background: white; padding: 2rem 3rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
