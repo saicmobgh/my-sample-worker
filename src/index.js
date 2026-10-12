@@ -116,7 +116,20 @@ export default {
     }
 
     if (env.ASSETS) {
-      return env.ASSETS.fetch(request);
+      const assetResponse = await env.ASSETS.fetch(request);
+      const contentType = assetResponse.headers.get("content-type") || "";
+
+      if (contentType.startsWith("text/html") && !/charset=/i.test(contentType)) {
+        const headers = new Headers(assetResponse.headers);
+        headers.set("content-type", "text/html; charset=utf-8");
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers,
+        });
+      }
+
+      return assetResponse;
     }
 
     return new Response("Static assets are not configured", { status: 500 });
