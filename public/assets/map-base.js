@@ -25,10 +25,9 @@
       this.map = new AMap.Map(settings.containerId || "map", {
         resizeEnable: true,
         center: settings.center || DEFAULT_CENTER,
-        zoom: settings.zoom || 15
+        zoom: settings.zoom || 15,
+        zooms: settings.zoomRange || [3, 18]
       });
-
-      this.map.setZooms(settings.zoomRange || [1, 25]);
       this.markers = [];
       this.polyline = null;
 
