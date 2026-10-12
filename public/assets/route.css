@@ -1,0 +1,157 @@
+.route-page .sidebar {
+  position: relative;
+  z-index: 2;
+  width: 380px;
+  max-width: 42vw;
+}
+
+.field-label {
+  display: block;
+  margin: 8px 0 4px;
+  font-size: 12px;
+  color: #555;
+}
+
+.mode-row {
+  display: flex;
+  gap: 4px;
+}
+
+.mode-row .btn {
+  flex: 1 1 0;
+}
+
+.suggest-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.suggest-list {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 2px);
+  max-height: 220px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.suggest-list button {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-bottom: 1px solid #f2f2f2;
+  background: #fff;
+  text-align: left;
+}
+
+.suggest-list button:hover,
+.suggest-list button:focus {
+  background: #f5f9fc;
+}
+
+.suggest-title {
+  display: block;
+  font-size: 13px;
+  color: #333;
+}
+
+.suggest-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #888;
+}
+
+.pick-btn.btn-primary {
+  color: #fff;
+}
+
+input.picking {
+  outline: 2px solid #f38020;
+  border-color: #f38020;
+}
+
+#driving-options {
+  margin-top: 8px;
+}
+
+#driving-options[hidden] {
+  display: none;
+}
+
+#policy {
+  margin-bottom: 8px;
+}
+
+.waypoint-row {
+  margin-bottom: 4px;
+}
+
+#add-waypoint {
+  margin-top: 4px;
+}
+
+.summary {
+  margin: 10px 0 6px;
+  padding: 8px;
+  background: #f7fbfc;
+  border: 1px solid #d9edf7;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.summary:empty {
+  display: none;
+}
+
+.steps {
+  max-height: 280px;
+  margin: 0 0 8px;
+  padding-left: 18px;
+  overflow: auto;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.steps:empty {
+  display: none;
+}
+
+.step-meta {
+  display: block;
+  color: #888;
+}
+
+.message {
+  min-height: 1.2em;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.message.error {
+  color: #a94442;
+}
+
+.message.warn {
+  color: #8a6d3b;
+}
+
+.message.ok {
+  color: #3c763d;
+}
+
+@media (max-width: 960px) {
+  .route-page .sidebar {
+    width: 100%;
+    max-width: none;
+  }
+}

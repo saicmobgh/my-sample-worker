@@ -78,6 +78,19 @@ body {
   background-color: #25a5f7;
 }
 
+.panel-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-heading-row a {
+  color: #31708f;
+  font-size: 12px;
+  font-weight: normal;
+}
+
 .help-text {
   font-size: 11px;
   color: #666;

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="icon" type="image/jpeg" href="./assets/favicon.jpeg">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/mark.css">
+    <link rel="stylesheet" href="./assets/route.css">
+    <title>路线规划</title>
+  </head>
+
+  <body class="route-page">
+    <div id="container" class="layout">
+      <div class="map-panel">
+        <div id="map"></div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="panel panel-info">
+          <div class="panel-heading panel-heading-row">
+            <span>路线规划</span>
+            <a href="./mark.html">标记</a>
+          </div>
+
+          <div class="panel-body">
+            <div class="mode-row" role="tablist">
+              <button type="button" class="btn btn-primary btn-sm" data-mode="driving">驾车</button>
+              <button type="button" class="btn btn-default btn-sm" data-mode="walking">步行</button>
+              <button type="button" class="btn btn-default btn-sm" data-mode="riding">骑行</button>
+              <button type="button" class="btn btn-default btn-sm" data-mode="transit">公交</button>
+            </div>
+
+            <label class="field-label" for="origin">起点</label>
+            <div class="field-row">
+              <div class="suggest-wrap">
+                <input id="origin" class="form-control" autocomplete="off" spellcheck="false" placeholder="经度,纬度 或地点名称">
+                <div id="origin-suggest" class="suggest-list" hidden></div>
+              </div>
+              <button type="button" class="btn btn-default pick-btn" data-pick="origin">选点</button>
+            </div>
+
+            <label class="field-label" for="destination">终点</label>
+            <div class="field-row">
+              <div class="suggest-wrap">
+                <input id="destination" class="form-control" autocomplete="off" spellcheck="false" placeholder="经度,纬度 或地点名称">
+                <div id="destination-suggest" class="suggest-list" hidden></div>
+              </div>
+              <button type="button" class="btn btn-default pick-btn" data-pick="destination">选点</button>
+            </div>
+
+            <div id="driving-options">
+              <label class="field-label" for="policy">驾车偏好</label>
+              <select id="policy" class="form-control">
+                <option value="LEAST_TIME">最快</option>
+                <option value="LEAST_DISTANCE">最短</option>
+                <option value="LEAST_FEE">少收费</option>
+                <option value="REAL_TRAFFIC">躲避拥堵</option>
+              </select>
+
+              <div id="waypoints"></div>
+              <button type="button" id="add-waypoint" class="btn btn-default btn-sm">添加途经点</button>
+            </div>
+
+            <div class="action-row">
+              <button type="button" id="plan" class="btn btn-primary">规划</button>
+              <button type="button" id="clear" class="btn btn-default">清理</button>
+            </div>
+
+            <div id="summary" class="summary"></div>
+            <ol id="steps" class="steps"></ol>
+            <p id="status" class="message">正在加载地图...</p>
+          </div>
+
+          <div class="panel-body help-text">
+            <b>填写方式：</b>
+            <ul>
+              <li>经纬度：<code>121.475,31.230</code>（经度在前）</li>
+              <li>地点：输入名称后点选搜索结果，例如「人民广场」</li>
+              <li>点「选点」，再在地图上单击</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="./assets/amap-loader.js"></script>
+    <script src="./assets/map-base.js"></script>
+    <script src="./assets/route-app.js"></script>
+  </body>
+</html>

@@ -261,7 +261,7 @@
     return coordinates.length ? coordinates[0] : null;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function bootMark() {
     var mapBase = new window.TrackVisionMapBase({
       containerId: "map",
       center: [121.484011, 31.240391],
@@ -340,5 +340,21 @@
     cleanButton.addEventListener("click", function () {
       mapBase.clearAll();
     });
-  });
+  }
+
+  function startMark() {
+    window.loadAmap("AMap.Scale,AMap.Geolocation").then(bootMark).catch(function (error) {
+      var map = document.getElementById("map");
+
+      if (map) {
+        map.textContent = error.message || "地图加载失败";
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startMark);
+  } else {
+    startMark();
+  }
 })();
