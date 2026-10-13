@@ -334,7 +334,12 @@
         strokeWeight: 4,
         showDir: true
       });
-      mapBase.fitView([mapBase.polyline]);
+      mapBase.drawLineMarkers(coordinates, {
+        fillColor: "#82F",
+        strokeColor: "#fff",
+        radius: 5
+      });
+      mapBase.fitView([mapBase.polyline].concat(mapBase.lineMarkers));
     });
 
     cleanButton.addEventListener("click", function () {

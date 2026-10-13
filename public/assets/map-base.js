@@ -29,6 +29,7 @@
         zooms: settings.zoomRange || [3, 18]
       });
       this.markers = [];
+      this.lineMarkers = [];
       this.polyline = null;
 
       this.addScaleControl();
@@ -154,6 +155,41 @@
       return this.polyline;
     }
 
+    drawLineMarkers(points, options) {
+      var settings = options || {};
+      var path = (points || []).map(createCoordinate).filter(Boolean);
+      var mapInstance = this.map;
+
+      this.clearLineMarkers();
+
+      path.forEach(function (point) {
+        var marker = new AMap.CircleMarker({
+          center: point,
+          radius: settings.radius || 5,
+          strokeColor: settings.strokeColor || "#fff",
+          strokeWeight: settings.strokeWeight || 2,
+          strokeOpacity: 1,
+          fillColor: settings.fillColor || "#82F",
+          fillOpacity: 1,
+          zIndex: 120,
+          bubble: true
+        });
+
+        marker.setMap(mapInstance);
+        this.lineMarkers.push(marker);
+      }, this);
+
+      return this.lineMarkers;
+    }
+
+    clearLineMarkers() {
+      this.lineMarkers.forEach(function (marker) {
+        marker.setMap(null);
+      });
+
+      this.lineMarkers = [];
+    }
+
     clearPolyline() {
       if (!this.polyline) {
         return;
@@ -165,6 +201,7 @@
 
     clearAll() {
       this.clearMarkers();
+      this.clearLineMarkers();
       this.clearPolyline();
     }
 
@@ -177,7 +214,7 @@
     }
 
     getOverlays() {
-      var overlays = this.markers.slice();
+      var overlays = this.markers.concat(this.lineMarkers);
 
       if (this.polyline) {
         overlays.push(this.polyline);
