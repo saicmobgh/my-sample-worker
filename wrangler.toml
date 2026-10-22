@@ -7,6 +7,11 @@ directory = "./public"
 binding = "ASSETS"
 run_worker_first = ["/api/*", "/_AMapService", "/_AMapService/*"]
 
+[[d1_databases]]
+binding = "DB"
+database_name = "my-sample-worker-db"
+database_id = "59a1d6a1-46cc-4fcb-98b0-a633bd3074d8"
+
 [[routes]]
 pattern = "wk.depsek.de5.net"
 custom_domain = true

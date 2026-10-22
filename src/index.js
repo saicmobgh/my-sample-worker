@@ -101,6 +101,42 @@ export default {
       });
     }
 
+    if (path === "/api/db" && request.method === "GET") {
+      if (!env.DB) {
+        return json({ error: "请绑定 D1 数据库（binding 名称：DB）" }, 500);
+      }
+
+      try {
+        const { results } = await env.DB.prepare(
+          "SELECT id, message, created_at FROM demo_messages ORDER BY id DESC LIMIT 20",
+        ).all();
+        return json({ results });
+      } catch (error) {
+        return json({ error: "读取数据库失败，请先执行 migrations/0001_demo.sql", detail: error.message }, 500);
+      }
+    }
+
+    if (path === "/api/db" && request.method === "POST") {
+      if (!env.DB) {
+        return json({ error: "请绑定 D1 数据库（binding 名称：DB）" }, 500);
+      }
+
+      try {
+        const body = await request.json();
+        const message = typeof body.message === "string" ? body.message.trim() : "";
+        if (!message || message.length > 500) {
+          return json({ error: "message 必须为 1 到 500 个字符" }, 400);
+        }
+
+        const result = await env.DB.prepare(
+          "INSERT INTO demo_messages (message) VALUES (?)",
+        ).bind(message).run();
+        return json({ id: result.meta.last_row_id, message }, 201);
+      } catch (error) {
+        return json({ error: "写入数据库失败，请确认已执行 migrations/0001_demo.sql", detail: error.message }, 500);
+      }
+    }
+
     if (path === "/api/nav/config") {
       const key = textBinding(env, "amap_key");
 
