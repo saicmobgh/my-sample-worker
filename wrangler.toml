@@ -12,6 +12,24 @@ binding = "DB"
 database_name = "my-sample-worker-db"
 database_id = "59a1d6a1-46cc-4fcb-98b0-a633bd3074d8"
 
+# Optional storage examples. KV and Durable Objects are enabled below.
+[[kv_namespaces]]
+binding = "KV"
+id = "9488294829bb47a59a116c907a06eeb6"
+
+# R2 must be enabled for the account in the Cloudflare Dashboard first.
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "my-sample-worker-bucket"
+
+[[durable_objects.bindings]]
+name = "COUNTER"
+class_name = "Counter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Counter"]
+
 [[routes]]
 pattern = "wk.depsek.de5.net"
 custom_domain = true

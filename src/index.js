@@ -137,6 +137,45 @@ export default {
       }
     }
 
+    if (path === "/api/kv" && (request.method === "GET" || request.method === "PUT")) {
+      if (!env.KV) return json({ error: "请绑定 KV namespace（binding 名称：KV）" }, 500);
+      const key = url.searchParams.get("key") || "demo";
+      if (request.method === "GET") {
+        const value = await env.KV.get(key);
+        return json({ key, value });
+      }
+      const value = await request.text();
+      if (!value || value.length > 5000) return json({ error: "请求体必须为 1 到 5000 个字符" }, 400);
+      await env.KV.put(key, value);
+      return json({ key, value }, 201);
+    }
+
+    if (path === "/api/r2" && (request.method === "GET" || request.method === "PUT")) {
+      if (!env.BUCKET) return json({ error: "请绑定 R2 bucket（binding 名称：BUCKET）" }, 500);
+      const key = url.searchParams.get("key") || "demo.txt";
+      if (request.method === "GET") {
+        const object = await env.BUCKET.get(key);
+        if (!object) return json({ error: "对象不存在", key }, 404);
+        const headers = new Headers({ "cache-control": "no-store" });
+        object.writeHttpMetadata(headers);
+        headers.set("etag", object.httpEtag);
+        return new Response(object.body, { headers });
+      }
+      const value = await request.text();
+      if (!value || value.length > 1_000_000) return json({ error: "请求体必须为 1 到 1000000 个字符" }, 400);
+      await env.BUCKET.put(key, value, { httpMetadata: { contentType: "text/plain; charset=utf-8" } });
+      return json({ key, size: value.length }, 201);
+    }
+
+    if (path === "/api/do" && (request.method === "GET" || request.method === "POST")) {
+      if (!env.COUNTER) return json({ error: "请绑定 Durable Object namespace（binding 名称：COUNTER）" }, 500);
+      const id = env.COUNTER.idFromName("demo");
+      return env.COUNTER.get(id).fetch(new Request(new URL("/" + (request.method === "POST" ? "increment" : ""), request.url), {
+        method: request.method,
+        body: request.method === "POST" ? await request.text() : undefined,
+      }));
+    }
+
     if (path === "/api/nav/config") {
       const key = textBinding(env, "amap_key");
 
@@ -171,3 +210,18 @@ export default {
     return new Response("Static assets are not configured", { status: 500 });
   },
 };
+
+export class Counter {
+  constructor(state) {
+    this.state = state;
+  }
+
+  async fetch(request) {
+    let value = (await this.state.storage.get("value")) || 0;
+    if (new URL(request.url).pathname === "/increment") {
+      value += 1;
+      await this.state.storage.put("value", value);
+    }
+    return Response.json({ value });
+  }
+}

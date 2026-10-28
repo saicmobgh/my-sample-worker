@@ -1,6 +1,6 @@
 # my-sample-worker
 
-一个基于 Cloudflare Workers 的示例项目，包含静态页面、高德地图代理和 Cloudflare D1 数据库示例。
+一个基于 Cloudflare Workers 的示例项目，包含静态页面、高德地图代理和 Cloudflare 数据存储示例。
 
 ## 在线地址
 
@@ -121,6 +121,45 @@ npx wrangler d1 create my-sample-worker-db
 npx wrangler d1 migrations apply my-sample-worker-db --local
 npx wrangler d1 migrations apply my-sample-worker-db --remote
 ```
+
+## 其他数据存储示例
+
+`src/index.js` 还包含 KV、R2 和 Durable Objects 的最小读写示例。当前 KV 和 Durable Objects 已绑定到线上 Worker；R2 需要先在 Cloudflare Dashboard 为账户启用后再配置。
+
+### KV（已上线）
+
+`KV` binding 已配置在线上 Worker，namespace ID 为 `9488294829bb47a59a116c907a06eeb6`：
+
+```sh
+npx wrangler kv namespace create KV
+curl 'http://localhost:8787/api/kv?key=greeting'
+curl -X PUT 'http://localhost:8787/api/kv?key=greeting' -d 'hello from KV'
+curl -sS -X PUT 'https://wk.depsek.de5.net/api/kv?key=greeting' -d 'hello from KV'
+curl -sS 'https://wk.depsek.de5.net/api/kv?key=greeting'
+```
+
+### R2（待启用）
+
+当前账户尚未启用 R2，创建 bucket 会返回 Cloudflare 错误 `10042`。请先在 Cloudflare Dashboard 启用 R2，再创建 bucket 并取消 `wrangler.toml` 中 `[[r2_buckets]]` 配置的注释。配置完成后，`PUT` 写入对象，`GET` 返回对象内容：
+
+```sh
+npx wrangler r2 bucket create my-sample-worker-bucket
+curl -X PUT 'http://localhost:8787/api/r2?key=demo.txt' -d 'hello from R2'
+curl 'http://localhost:8787/api/r2?key=demo.txt'
+```
+
+### Durable Objects（已上线）
+
+`COUNTER` binding 和 `Counter` 类已部署。`GET` 读取计数器，`POST` 自增：
+
+```sh
+curl http://localhost:8787/api/do
+curl -X POST http://localhost:8787/api/do
+curl -sS 'https://wk.depsek.de5.net/api/do'
+curl -sS -X POST 'https://wk.depsek.de5.net/api/do'
+```
+
+R2 尚未绑定时，`/api/r2` 会返回 `500` 以及 binding 配置提示；D1、KV 和 Durable Objects 接口不受影响。
 
 ## 部署
 
