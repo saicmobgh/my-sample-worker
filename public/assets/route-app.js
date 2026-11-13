@@ -369,10 +369,10 @@
     field.input.value = point.label;
     field.setPoint(point);
     showPreview(field, point);
-    state.mapApp.setCenter([point.lng, point.lat]);
-
-    if (state.mapApp.map.getZoom() < 14) {
-      state.mapApp.map.setZoom(15);
+    if (state.mapApp.markers.length === 1) {
+      state.mapApp.focusPoint([point.lng, point.lat]);
+    } else {
+      state.mapApp.fitView();
     }
   }
 
@@ -1219,6 +1219,15 @@
     setStatus("", "");
   }
 
+  function fitRouteView() {
+    var mapOverlays = state.mapApp.map.getAllOverlays() || [];
+    var overlays = mapOverlays.concat(state.mapApp.getOverlays());
+
+    state.mapApp.fitView(overlays.filter(function (overlay, index) {
+      return overlays.indexOf(overlay) === index;
+    }));
+  }
+
   function bindStaticEvents() {
     document.querySelectorAll(".mode-row [data-mode]").forEach(function (button) {
       button.addEventListener("click", function () {
@@ -1290,6 +1299,7 @@
           center: [121.484011, 31.240391],
           zoom: 12
         });
+        state.mapApp.bindViewControls({ fit: fitRouteView });
         bindStaticEvents();
         setStatus("填写起点和终点后规划路线", "");
       } catch (error) {

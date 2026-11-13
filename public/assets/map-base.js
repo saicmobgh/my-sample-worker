@@ -2,6 +2,10 @@
   var DEFAULT_CENTER = [121.484011, 31.240391];
 
   function createCoordinate(value) {
+    if (value && typeof value.getLng === "function" && typeof value.getLat === "function") {
+      return createCoordinate([value.getLng(), value.getLat()]);
+    }
+
     if (Array.isArray(value) && value.length >= 2) {
       var lng = Number(value[0]);
       var lat = Number(value[1]);
@@ -75,6 +79,31 @@
       if (point) {
         this.map.setCenter(point);
       }
+    }
+
+    focusPoint(coordinate) {
+      var point = createCoordinate(coordinate);
+
+      if (point) {
+        this.map.setZoomAndCenter(15, point);
+      }
+    }
+
+    zoomIn() {
+      this.map.setZoom(Math.min(18, this.map.getZoom() + 1));
+    }
+
+    zoomOut() {
+      this.map.setZoom(Math.max(3, this.map.getZoom() - 1));
+    }
+
+    bindViewControls(options) {
+      var settings = options || {};
+      var fit = settings.fit || this.fitView.bind(this);
+
+      document.getElementById("zoom-in").addEventListener("click", this.zoomIn.bind(this));
+      document.getElementById("zoom-out").addEventListener("click", this.zoomOut.bind(this));
+      document.getElementById("fit-drawing").addEventListener("click", fit);
     }
 
     createMarkerContent(label, options) {
@@ -206,10 +235,14 @@
     }
 
     fitView(overlays) {
-      var activeOverlays = overlays && overlays.length ? overlays.filter(Boolean) : this.getOverlays();
+      var activeOverlays = overlays ? overlays.filter(Boolean) : this.getOverlays();
 
       if (activeOverlays.length) {
-        this.map.setFitView(activeOverlays, false, [40, 40, 40, 40]);
+        if (activeOverlays.length === 1 && typeof activeOverlays[0].getPosition === "function") {
+          this.focusPoint(activeOverlays[0].getPosition());
+        } else {
+          this.map.setFitView(activeOverlays, false, [40, 40, 40, 40]);
+        }
       }
     }
 

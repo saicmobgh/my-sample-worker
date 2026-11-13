@@ -277,6 +277,8 @@
     var drawLineButton = document.getElementById("mark3");
     var cleanButton = document.getElementById("clean");
 
+    mapBase.bindViewControls();
+
     function markCoordinate(coordinate) {
       return mapBase.addMarker(coordinate, {
         iconSrc: RED_MARKER_ICON,
@@ -298,8 +300,10 @@
         return;
       }
 
-      mapBase.setCenter(coordinate);
       markCoordinate(coordinate);
+      if (mapBase.getOverlays().length === 1) {
+        mapBase.fitView();
+      }
     });
 
     markButton.addEventListener("click", function () {
@@ -307,6 +311,9 @@
 
       if (coordinate) {
         markCoordinate(coordinate);
+        if (mapBase.getOverlays().length === 1) {
+          mapBase.fitView();
+        }
       }
     });
 
@@ -328,7 +335,6 @@
         return;
       }
 
-      mapBase.setCenter(coordinates[Math.floor(coordinates.length / 2)]);
       mapBase.drawPolyline(coordinates, {
         strokeColor: "#82F",
         strokeWeight: 4,
@@ -339,7 +345,11 @@
         strokeColor: "#fff",
         radius: 5
       });
-      mapBase.fitView([mapBase.polyline].concat(mapBase.lineMarkers));
+      if (coordinates.length === 1) {
+        mapBase.focusPoint(coordinates[0]);
+      } else {
+        mapBase.fitView([mapBase.polyline].concat(mapBase.lineMarkers));
+      }
     });
 
     cleanButton.addEventListener("click", function () {
