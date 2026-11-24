@@ -15,10 +15,15 @@
   let marker;
   let searchNumber = 0;
   let amapPromise;
+  // Some entrance POIs are absent from PlaceSearch details but appear in Autocomplete.
+  // Match the returned ID before showing a result; never use a name match alone.
+  const fallbackHints = Object.freeze({
+    B00155HXIQ: { keyword: "大华阳城花园西南门", city: "上海" }
+  });
 
   function loadSearchPlugin() {
     if (!amapPromise) {
-      amapPromise = window.loadAmap("AMap.PlaceSearch,AMap.Scale").catch(function (error) {
+      amapPromise = window.loadAmap("AMap.PlaceSearch,AMap.Autocomplete,AMap.Scale").catch(function (error) {
         amapPromise = null;
         throw error;
       });
@@ -81,10 +86,11 @@
     }
   }
 
-  function showPoi(poi, responseBody) {
+  function showPoi(poi, responseBody, source) {
     result.hidden = false;
     name.textContent = display(poi.name) || "未命名 POI";
     fields.replaceChildren();
+    addField("数据来源", source === "tip" ? "高德地点提示（基本信息）" : "高德地点详情");
     addField("POI ID", poi.id);
     addField("经纬度（经度,纬度）", poi.location);
     addField("地址", poi.address);
@@ -92,7 +98,7 @@
     addField("类型编码", poi.typecode);
     addField("省份", poi.pname);
     addField("城市", poi.cityname);
-    addField("区县", poi.adname);
+    addField("区县", poi.adname || poi.district);
     addField("电话", poi.tel || poi.business && poi.business.tel);
     addField("网址", poi.website);
     addField("邮编", poi.postcode);
@@ -118,6 +124,51 @@
     if (point) showMap(point, name.textContent);
   }
 
+  function getDetails(id) {
+    return new Promise(function (resolve, reject) {
+      window.AMap.plugin("AMap.PlaceSearch", function () {
+        try {
+          const placeSearch = new window.AMap.PlaceSearch({ extensions: "all" });
+          placeSearch.getDetails(id, function (queryStatus, response) {
+            const pois = response && response.poiList && response.poiList.pois;
+            if (queryStatus === "complete" && Array.isArray(pois) && pois.length) {
+              resolve({ poi: pois[0], body: response, source: "details" });
+            } else if (queryStatus === "no_data" || queryStatus === "complete") {
+              resolve(null);
+            } else {
+              reject(new Error(response && response.info && response.info !== "OK" ? response.info : "高德地点详情查询失败。"));
+            }
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  function getAutocompleteTip(id, hint) {
+    return new Promise(function (resolve, reject) {
+      window.AMap.plugin("AMap.Autocomplete", function () {
+        try {
+          const autocomplete = new window.AMap.Autocomplete({ city: hint.city, datatype: "all" });
+          autocomplete.search(hint.keyword, function (queryStatus, response) {
+            const tips = response && response.tips;
+            if (queryStatus === "complete" && Array.isArray(tips)) {
+              const poi = tips.find(function (tip) { return tip.id === id; });
+              resolve(poi ? { poi: poi, body: { source: "AMap.Autocomplete", tip: poi }, source: "tip" } : null);
+            } else if (queryStatus === "no_data") {
+              resolve(null);
+            } else {
+              reject(new Error(response && response.info && response.info !== "OK" ? response.info : "高德地点提示查询失败。"));
+            }
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
   async function search(id) {
     const currentSearch = ++searchNumber;
     if (!/^[A-Za-z0-9_-]{1,64}$/.test(id)) {
@@ -134,27 +185,18 @@
     try {
       await loadSearchPlugin();
       if (currentSearch !== searchNumber) return;
-      const body = await new Promise(function (resolve, reject) {
-        window.AMap.plugin("AMap.PlaceSearch", function () {
-          try {
-            const placeSearch = new window.AMap.PlaceSearch({ extensions: "all" });
-            placeSearch.getDetails(id, function (queryStatus, response) {
-              if (queryStatus === "complete" && response) {
-                resolve(response);
-              } else {
-                reject(new Error(response && response.info && response.info !== "OK" ? response.info : "未找到对应的 POI，请检查 ID。"));
-              }
-            });
-          } catch (error) {
-            reject(error);
-          }
-        });
-      });
+      let match = await getDetails(id);
       if (currentSearch !== searchNumber) return;
-      const pois = body.poiList && body.poiList.pois;
-      if (!Array.isArray(pois) || pois.length === 0) throw new Error("未找到对应的 POI，请检查 ID。");
-      showPoi(pois[0], body);
-      status.textContent = "查询成功。";
+      if (!match && fallbackHints[id]) {
+        status.textContent = "详情接口无数据，正在核对高德地点提示…";
+        match = await getAutocompleteTip(id, fallbackHints[id]);
+      }
+      if (currentSearch !== searchNumber) return;
+      if (!match) throw new Error("未找到对应的 POI，请检查 ID。");
+      showPoi(match.poi, match.body, match.source);
+      status.textContent = match.source === "tip"
+        ? "已按 POI ID 从高德地点提示中找到该地点。详情接口无数据，仅展示基本信息；地图坐标不能视为导航入口坐标。"
+        : "查询成功。";
       const url = new URL(window.location.href);
       url.searchParams.set("id", id);
       window.history.replaceState(null, "", url);
