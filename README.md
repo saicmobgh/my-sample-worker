@@ -24,6 +24,7 @@
 - 首页：<https://wk.depsek.de5.net/>
 - 标记页面：<https://wk.depsek.de5.net/mark.html>
 - 路线规划页面：<https://wk.depsek.de5.net/route.html>
+- POI 详情查询页面：<https://wk.depsek.de5.net/poi.html>
 
 ## 功能与 API
 
@@ -32,7 +33,16 @@
 - `GET /`：项目首页。
 - `GET /mark.html`：地图坐标标记页面。
 - `GET /route.html`：地图路线规划页面。
+- `GET /poi.html`：根据 POI ID 查询地点详情、经纬度和导航入口。
 - `/assets/*`：前端 JavaScript、CSS 和图标。
+
+### POI 详情查询
+
+打开 POI 详情页，输入高德 POI ID 后查询。页面显示地点名称、经纬度（经度在前）、地址、类型等字段；接口返回导航入口时也会显示，并在地图上标出 POI。支持分享带查询参数的地址，例如：
+
+<https://wk.depsek.de5.net/poi.html?id=B000A83U0P>
+
+页面使用高德 JS API 的 PlaceSearch.getDetails 查询 POI，需要配置现有的 amap_key 与 amap_secret。若接口未返回经纬度，仍可查看其他详情及查询结果 JSON。
 
 ### 基础 API
 

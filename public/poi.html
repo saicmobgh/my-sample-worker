@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/jpeg" href="/assets/favicon.jpeg">
+    <link rel="stylesheet" href="/assets/poi.css">
+    <title>POI 详情查询</title>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <div><p class="eyebrow">高德地图工具</p><h1>POI 详情查询</h1><p>输入 POI ID，查询地点信息、经纬度与地图位置。</p></div>
+        <nav aria-label="页面导航"><a href="/">首页</a><a href="/mark.html">标记</a><a href="/route.html">路线规划</a></nav>
+      </header>
+
+      <form id="poi-form" class="search" autocomplete="off">
+        <label for="poi-id">POI ID</label>
+        <div class="search-row"><input id="poi-id" name="id" required spellcheck="false" placeholder="例如 B000A83U0P" aria-describedby="search-help"><button id="search-button" type="submit">查询详情</button></div>
+        <p id="search-help">可从高德地图搜索结果中复制 POI ID，也可使用带有 ?id=POI_ID 的链接直接打开本页。</p>
+      </form>
+
+      <p id="status" class="status" role="status" aria-live="polite">请输入 POI ID 后查询。</p>
+
+      <section id="result" class="result" hidden aria-label="POI 查询结果">
+        <div class="card">
+          <p class="eyebrow">查询结果</p>
+          <h2 id="poi-name"></h2>
+          <dl id="poi-fields" class="fields"></dl>
+        </div>
+        <div id="map-section" class="card" hidden>
+          <h2>地图位置</h2>
+          <div id="poi-map" class="map" aria-label="POI 所在位置地图"></div>
+          <p id="map-status" class="map-status" role="status"></p>
+        </div>
+        <details class="card raw-data"><summary>查看查询结果数据</summary><pre id="poi-json"></pre></details>
+      </section>
+    </main>
+    <script src="/assets/amap-loader.js"></script>
+    <script src="/assets/poi-app.js"></script>
+  </body>
+</html>
